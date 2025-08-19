@@ -1,0 +1,29 @@
+name: Build & Publish (Vite)
+
+on:
+  workflow_dispatch:        # manual trigger from UI or API
+  push:
+    branches: [ main ]      # optional: auto-deploy on push
+
+permissions:
+  contents: write           # needed to push to gh-pages
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npm run build:secure
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
